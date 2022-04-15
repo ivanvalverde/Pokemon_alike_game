@@ -10,3 +10,6 @@ It's just a POC so don't expect too much of it.
 
 ## Controls
 Classic WASD
+
+## Start
+Open index.html

@@ -1,0 +1,146 @@
+* {
+    font-family: 'Press Start 2P', cursive;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: 16px;
+}
+
+button {
+    border: 0;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #DDD;
+    cursor: pointer;
+}
+
+.game-container {
+    display: inline-block;
+    position: relative;
+}
+
+.overlapping-div {
+    background-color: black;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.battle-options {
+    background-color: white;
+    position: absolute;
+    top: 430px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    border-top: 4px black solid;
+    display: flex;
+}
+
+.attack-options {
+    width: 66.66%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.attack-types {
+    display: flex;
+    width: 33.33%;
+    justify-content: center;
+    align-items: center;
+    border-left: 4px black solid;
+}
+
+.enemy-info {
+    position: absolute;
+    padding: 12px;
+    background-color: white;
+    width: 250px;
+    top: 20px;
+    left: 20px;
+    border: 4px black solid;
+}
+
+.enemy-health-bar {
+    position: relative; 
+}
+
+.enemy-health-bar-not-filled {
+    height: 5px;
+    background-color: #CCCCCC;
+    margin-top: 10px;
+}
+
+.enemy-health-bar-filled {
+    top: 0;
+    right: 0;
+    left: 0;
+    position: absolute;
+    height: 5px;
+    background-color: green;
+}
+
+.friend-info {
+    position: absolute;
+    padding: 12px;
+    background-color: white;
+    width: 250px;
+    top: 350px;
+    right: 20px;
+    border: 4px black solid;
+}
+
+.friend-health-bar {
+    position: relative; 
+}
+
+.friend-health-bar-not-filled {
+    height: 5px;
+    background-color: #CCCCCC;
+    margin-top: 10px;
+}
+
+.friend-health-bar-filled {
+    top: 0;
+    right: 0;
+    left: 0;
+    position: absolute;
+    height: 5px;
+    background-color: green;
+}
+
+.battle-texts {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: white;
+    padding: 12px;
+    display: none;
+    cursor: pointer;
+}
+
+.user-interface {
+    display: none;
+}

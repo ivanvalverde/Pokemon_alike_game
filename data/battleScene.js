@@ -12,18 +12,24 @@ const battleBackground = new Sprite({
 let battleAnimationId;
 let renderedSprites;
 let queue;
-let draggle;
+let enemy;
 let emby;
+let enemies = [monsters.Bubbla, monsters.Draggle];
+emby = new Monster(monsters.Emby);
 
 const initBattle = () => {
+    if (emby.health <= 0) emby = new Monster({ ...monsters.Emby, level: emby.level, experience: emby.experience });
     document.querySelector('#user-interface').style.display = 'block';
     document.querySelector('#battle-texts').style.display = 'none';
     document.querySelector('#enemy-health-bar-filled').style.width = '100%';
-    document.querySelector('#friend-health-bar-filled').style.width = '100%';
+    document.querySelector('#friend-level').innerHTML = emby.level;
+    document.querySelector('#friend-health-bar-filled').style.width = `${emby.health}%`;
+    document.querySelector('#friend-experience-bar-filled').style.width = `${emby.experience}%`;
     document.querySelector('#attacks-box').replaceChildren();
-    draggle = new Monster(monsters.Draggle);
-    emby = new Monster(monsters.Emby);
-    renderedSprites = [draggle, emby];
+    enemy = new Monster({ ...enemies[Math.floor(Math.random() * enemies.length)] });
+    document.querySelector('#enemy-level').innerHTML = enemy.level;
+    renderedSprites = [enemy, emby];
+    document.querySelector("#enemy-name").innerHTML = enemy.name;
     queue = [];
 
     emby.attacks.forEach((atk) => {
@@ -34,16 +40,20 @@ const initBattle = () => {
 
     document.querySelectorAll("button").forEach((button) => {
         button.addEventListener('click', (e) => {
+            disableInterface();
             const selectedAttack = monsterAttacks[e.target.innerHTML];
             emby.attack({
                 attack: selectedAttack,
-                recipient: draggle,
+                recipient: enemy,
                 renderedSprites
             });
 
-            if (draggle.health <= 0) {
+            if (enemy.health <= 0) {
                 queue.push(() => {
-                    draggle.faint();
+                    endBattleProcedure({ battleWinner: emby, battleLoser: enemy });
+                });
+                queue.push(() => {
+                    afterBattleInfo({ battleWinner: emby, battleLoser: enemy });
                 });
                 queue.push(() => {
                     gsap.to('#overlapping-div', {
@@ -61,16 +71,19 @@ const initBattle = () => {
                     });
                 });
             };
-            const randomAttack = draggle.attacks[Math.floor(Math.random() * draggle.attacks.length)];
+            const randomAttack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
             queue.push(() => {
-                draggle.attack({
+                disableInterface();
+                enemy.attack({
                     attack: randomAttack,
                     recipient: emby,
                     renderedSprites
                 });
                 if (emby.health <= 0) {
                     queue.push(() => {
-                        emby.faint();
+                        endBattleProcedure({ battleWinner: enemy, battleLoser: emby });
+                        audio.battle.stop();
+                        audio.victory.play();
                     });
                     queue.push(() => {
                         gsap.to('#overlapping-div', {
@@ -99,6 +112,51 @@ const initBattle = () => {
 
         });
     });
+};
+
+const endBattleProcedure = ({ battleWinner, battleLoser }) => {
+    let remainerExp;
+    const battleTexts = document.querySelector('#battle-texts');
+    gsap.to(battleLoser, {
+        opacity: 0,
+    });
+    if (!battleWinner.isEnemy) {
+        battleWinner.experience += battleLoser.level * 40;
+    };
+    battleTexts.innerHTML = battleLoser.name + ' fainted';
+    if (battleWinner.experience >= 100) {
+        remainerExp = battleWinner.experience - 100;
+        battleWinner.level += 1;
+        gsap.to('#friend-experience-bar-filled', {
+            width: `100%`,
+            duration: 1,
+            onComplete() {
+                battleWinner.experience = 0;
+                document.querySelector('#friend-level').innerHTML = battleWinner.level;
+                battleWinner.experience = remainerExp;
+                gsap.to('#friend-experience-bar-filled', {
+                    width: `${battleWinner.experience}%`,
+                    duration: 1,
+                });
+            }
+        });
+    } else {
+        gsap.to('#friend-experience-bar-filled', {
+            width: `${battleWinner.experience}%`
+        });
+    };
+};
+
+const afterBattleInfo = ({ battleWinner, battleLoser }) => {
+    const battleTexts = document.querySelector('#battle-texts');
+    const isFriendlyMonster = !battleWinner.isEnemy;
+
+    if (isFriendlyMonster) {
+        battleTexts.innerHTML = `${battleWinner.name} gained ${battleLoser.level * 40} experience points!`;
+    };
+
+    audio.battle.stop();
+    audio.victory.play();
 };
 
 const animateBattle = () => {

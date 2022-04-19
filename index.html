@@ -18,17 +18,21 @@
         <canvas></canvas>
         <div class="user-interface" id="user-interface">
             <div class="enemy-info">
-                <h1>Draggle</h1>
+                <div class="enemy-status"><h1 id="enemy-name">Draggle</h1><h1>Lv <span id="enemy-level"></span></h1></div>
                 <div class="enemy-health-bar">
                     <div class="enemy-health-bar-not-filled"></div>
                     <div class="enemy-health-bar-filled" id="enemy-health-bar-filled"></div>
                 </div>
             </div>
             <div class="friend-info">
-                <h1>Emby</h1>
+                <div class="friend-status"><h1>Emby</h1><h1>Lv <span id="friend-level"></span></h1></div>
                 <div class="friend-health-bar">
                     <div class="friend-health-bar-not-filled"></div>
                     <div class="friend-health-bar-filled" id="friend-health-bar-filled"></div>
+                </div>
+                <div class="friend-experience-bar">
+                    <div class="friend-experience-bar-not-filled"></div>
+                    <div class="friend-experience-bar-filled" id="friend-experience-bar-filled"></div>
                 </div>
             </div>
             <div class="battle-options">
@@ -56,6 +60,7 @@
 <script src="./data/collisions.js"></script>
 <script src="./data/attacks.js"></script>
 <script src="./data/monsters.js"></script>
+<script src="./data/reusable.js"></script>
 <script src="./data/classes.js"></script>
 <script src="./index.js"></script>
 <script src="./data/battleScene.js"></script>

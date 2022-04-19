@@ -11,4 +11,10 @@ const monsterAttacks = {
         type: 'Fire',
         color: 'red'
     },
+    Bubble: {
+        name: 'Bubble',
+        damage: 25,
+        type: 'Water',
+        color: 'blue'
+    }
 };

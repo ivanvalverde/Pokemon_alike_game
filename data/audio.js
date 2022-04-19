@@ -31,10 +31,14 @@ const audio = {
         html5: true,
         volume: 0.1
     }),
-
     victory: new Howl({
         src: './audio/victory.wav',
         html5: true,
         volume: 0.1
+    }),
+    bubbleHit: new Howl({
+        src: './audio/bubbleHit.mp3',
+        html5: true,
+        volume: 1
     }),
 };

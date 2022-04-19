@@ -52,26 +52,14 @@ class Sprite {
 };
 
 class Monster extends Sprite {
-    constructor({ name, isEnemy = false, position, image, frames = { max: 1, hold: 10 }, sprites, animate = false, rotation = 0, attacks }) {
+    constructor({ name, isEnemy = false, position, image, frames = { max: 1, hold: 10 }, sprites, animate = false, rotation = 0, attacks, experience, level = 1 }) {
         super({ position, image, frames, sprites, animate, rotation })
         this.isEnemy = isEnemy;
         this.name = name;
         this.attacks = attacks;
         this.health = 100;
-    };
-
-    
-    faint() {
-        const battleTexts = document.querySelector('#battle-texts');
-        battleTexts.innerHTML = this.name + ' fainted';
-        gsap.to(this.position, {
-            y: this.position.y + 20,
-        });
-        gsap.to(this, {
-            opacity: 0,
-        });
-        audio.battle.stop();
-        audio.victory.play();
+        this.experience = 30;
+        this.level = level;
     };
 
     attack({ attack, recipient, renderedSprites }) {
@@ -127,6 +115,52 @@ class Monster extends Sprite {
                             yoyo: true,
                             duration: 0.08
                         });
+                        enableInterface();
+                    },
+                });
+
+                break;
+            case 'Bubble':
+                audio.initFireball.play();
+                const bubbleImage = new Image();
+                bubbleImage.src = './images/bubbleTest.png';
+                const bubble = new Sprite({
+                    position: {
+                        x: this.position.x,
+                        y: this.position.y
+                    },
+                    image: bubbleImage,
+                    frames: {
+                        max: 4,
+                        hold: 15
+                    },
+                    animate: true,
+                });
+                renderedSprites.splice(1, 0, bubble);
+                gsap.to(bubble.position, {
+                    x: recipient.position.x + 20,
+                    y: recipient.position.y + 10,
+                    yoyo: true,
+                    duration: 2,
+                    onComplete() {
+                        audio.bubbleHit.play();
+                        renderedSprites.splice(1, 1);
+                        gsap.to(healthBar, {
+                            width: `${recipient.health}%`
+                        })
+                        gsap.to(recipient.position, {
+                            x: recipient.position.x + 20,
+                            yoyo: true,
+                            repeat: 5,
+                            duration: 0.2
+                        });
+                        gsap.to(recipient, {
+                            opacity: 0,
+                            repeat: 5,
+                            yoyo: true,
+                            duration: 0.08
+                        });
+                        enableInterface();
                     },
                 });
 
@@ -158,6 +192,7 @@ class Monster extends Sprite {
                             yoyo: true,
                             duration: 0.08,
                         });
+                        enableInterface();
                     }
                 }).to(this.position, {
                     x: this.position.x,

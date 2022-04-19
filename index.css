@@ -91,13 +91,13 @@ button:hover {
     margin-top: 10px;
 }
 
-.enemy-health-bar-filled {
+.enemy-health-bar-filled, .friend-health-bar-filled {
     top: 0;
     right: 0;
     left: 0;
     position: absolute;
     height: 5px;
-    background-color: green;
+    background-color: rgb(0, 211, 0);
 }
 
 .friend-info {
@@ -110,6 +110,11 @@ button:hover {
     border: 4px black solid;
 }
 
+.friend-status, .enemy-status {
+    display: flex;
+    justify-content: space-between;
+}
+
 .friend-health-bar {
     position: relative; 
 }
@@ -120,13 +125,23 @@ button:hover {
     margin-top: 10px;
 }
 
-.friend-health-bar-filled {
+.friend-experience-bar {
+    position: relative; 
+}
+
+.friend-experience-bar-not-filled {
+    height: 5px;
+    background-color: #CCCCCC;
+    margin-top: 10px;
+}
+
+.friend-experience-bar-filled {
     top: 0;
-    right: 0;
+    right: 0;   
     left: 0;
     position: absolute;
     height: 5px;
-    background-color: green;
+    background-color: rgb(0, 145, 255);
 }
 
 .battle-texts {

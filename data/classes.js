@@ -52,20 +52,27 @@ class Sprite {
 };
 
 class Monster extends Sprite {
-    constructor({ name, isEnemy = false, position, image, frames = { max: 1, hold: 10 }, sprites, animate = false, rotation = 0, attacks, experience, level = 1 }) {
+    constructor({ name, isEnemy = false, position, image, frames = { max: 1, hold: 10 },
+        sprites, animate = false, rotation = 0, attacks, experience = 0, level = 1, health, status, weakness = [] }) {
         super({ position, image, frames, sprites, animate, rotation })
         this.isEnemy = isEnemy;
         this.name = name;
         this.attacks = attacks;
-        this.health = 100;
-        this.experience = 30;
+        this.health = { max: health.max, current: health.max };
+        this.experience = experience;
         this.level = level;
+        this.status = {
+            atk: status.atk,
+            def: status.def,
+            spd: status.spd,
+            lck: status.lck
+        };
+        this.weakness = weakness;
     };
 
     attack({ attack, recipient, renderedSprites }) {
-        const battleTexts = document.querySelector('#battle-texts');
         battleTexts.style.display = 'block';
-        battleTexts.innerHTML = this.name + ' used ' + attack.name;
+        battleTexts.innerHTML = this.name + ' used ' + attack.atkUsed.name;
 
         let healthBar = '#enemy-health-bar-filled';
         if (this.isEnemy) healthBar = '#friend-health-bar-filled';
@@ -73,9 +80,10 @@ class Monster extends Sprite {
         let rotation = 1;
         if (this.isEnemy) rotation = -2.2;
 
-        recipient.health = recipient.health - attack.damage;
+        recipient.health.current -= attack.dmg;
+        const recipientPercentageHealth = (recipient.health.current / recipient.health.max) * 100
 
-        switch (attack.name) {
+        switch (attack.atkUsed.name) {
             case 'Fireball':
                 audio.initFireball.play();
                 const fireballImage = new Image();
@@ -101,7 +109,7 @@ class Monster extends Sprite {
                         audio.fireballHit.play();
                         renderedSprites.splice(1, 1);
                         gsap.to(healthBar, {
-                            width: `${recipient.health}%`
+                            width: `${recipientPercentageHealth}%`
                         })
                         gsap.to(recipient.position, {
                             x: recipient.position.x + 20,
@@ -146,7 +154,7 @@ class Monster extends Sprite {
                         audio.bubbleHit.play();
                         renderedSprites.splice(1, 1);
                         gsap.to(healthBar, {
-                            width: `${recipient.health}%`
+                            width: `${recipientPercentageHealth}%`
                         })
                         gsap.to(recipient.position, {
                             x: recipient.position.x + 20,
@@ -178,7 +186,7 @@ class Monster extends Sprite {
                     onComplete() {
                         audio.tackleHit.play();
                         gsap.to(healthBar, {
-                            width: `${recipient.health}%`
+                            width: `${recipientPercentageHealth}%`
                         });
                         gsap.to(recipient.position, {
                             x: recipient.position.x + 20,

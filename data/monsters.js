@@ -14,6 +14,14 @@ const monsters = {
         animate: true,
         name: 'Emby',
         attacks: [monsterAttacks.Tackle, monsterAttacks.Fireball],
+        health: { max: 100 },
+        status: {
+            atk: 9,
+            def: 4,
+            spd: 6,
+            lck: 6,
+        },
+        weakness: ['Water']
     },
     Draggle: {
         position: {
@@ -31,6 +39,13 @@ const monsters = {
         isEnemy: true,
         name: 'Draggle',
         attacks: [monsterAttacks.Tackle],
+        health: { max: 150 },
+        status: {
+            atk: 6,
+            def: 9,
+            spd: 5,
+            lck: 5,
+        }
     },
     Bubbla: {
         position: {
@@ -48,5 +63,12 @@ const monsters = {
         isEnemy: true,
         name: 'Bubbla',
         attacks: [monsterAttacks.Tackle, monsterAttacks.Bubble],
+        health: { max: 100 },
+        status: {
+            atk: 8,
+            def: 5,
+            spd: 6,
+            lck: 6,
+        },
     }
 }

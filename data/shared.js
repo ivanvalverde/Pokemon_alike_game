@@ -35,14 +35,17 @@ const enableInterface = () => {
     );
 };
 
-const calculateDamage = ({ monsterAtk, monsterLck, atk, oponentWeakness }) => {
+const calculateDamage = ({ monsterAtk, monsterLck, atk, oponentWeakness, oponentDefense }) => {
     const isCriticalHit = Math.floor(Math.random() * (101 + monsterLck)) >= 90;
-    const isSuperEffective = atk.type === oponentWeakness;
-    const calculatedDamage = isSuperEffective
+    const isSuperEffective = oponentWeakness.includes(atk.type);
+    console.log(atk.type, oponentWeakness);
+    let calculatedDamage = isSuperEffective
         ?
-        2 * (Math.floor(Math.random() * (monsterAtk + 1)) + atk.damage)
+        2 * (Math.floor(Math.random() * (monsterAtk + 1)) + atk.damage - oponentDefense)
         :
-        (Math.floor(Math.random() * (monsterAtk + 1)) + atk.damage);
+        (Math.floor(Math.random() * (monsterAtk + 1)) + atk.damage - oponentDefense);
+
+    if (calculatedDamage < 1) calculatedDamage = 1;
 
     const damageDealt = isCriticalHit ? calculatedDamage * 2 : calculatedDamage;
     return {
@@ -50,5 +53,15 @@ const calculateDamage = ({ monsterAtk, monsterLck, atk, oponentWeakness }) => {
         dmg: damageDealt,
         isCriticalHit,
         isSuperEffective
+    };
+};
+
+const doesEnemyAttackFirst = ({ player, enemy }) => {
+    if (player.status.spd === enemy.status.spd) {
+        return Boolean(Math.floor(Math.random() * 2));
+    } else if (player.status.spd < enemy.status.spd) {
+        return true;
+    } else {
+        return false
     };
 };

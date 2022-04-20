@@ -72,7 +72,7 @@ battleZonesMap.forEach((row, rowIndex) => {
 const player = new Sprite({
     position: {
         x: canvas.width / 2 - 192 / 8, // initial x axis position, 192 -> size of image width 
-        y: canvas.height / 2 - 68 / 2, // initial y axis position, 68 -> size of image height
+        y: canvas.height / 2 - 50, // initial y axis position, 68 -> size of image height
     },
     image: playerDownImage,
     frames: {

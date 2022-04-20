@@ -21,7 +21,7 @@ const monsters = {
             spd: 6,
             lck: 6,
         },
-        weakness: ['Water']
+        weakness: ['Water'],
     },
     Draggle: {
         position: {

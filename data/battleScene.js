@@ -41,50 +41,32 @@ const initBattle = () => {
 
     document.querySelectorAll("button").forEach((button) => {
         button.addEventListener('click', (e) => {
-            disableInterface();
             const selectedAttack = monsterAttacks[e.target.innerHTML];
             const attackInfo = calculateDamage({
                 monsterAtk: emby.status.atk,
                 monsterLck: emby.status.lck,
                 atk: selectedAttack,
                 oponentWeakness: enemy.weakness,
+                oponentDefense: enemy.status.def,
             });
-            emby.attack({
-                attack: attackInfo,
-                recipient: enemy,
-                renderedSprites
-            });
-
-            if (enemy.health.current <= 0) {
-                queue.push(() => {
-                    endBattleProcedure({ battleWinner: emby, battleLoser: enemy });
-                });
-                queue.push(() => {
-                    afterBattleInfo({ battleWinner: emby, battleLoser: enemy });
-                });
-                queue.push(() => {
-                    gsap.to('#overlapping-div', {
-                        opacity: 1,
-                        onComplete() {
-                            transitionToMap();
-                        },
-                    });
-                });
-            };
             const randomAttack = enemy.attacks[Math.floor(Math.random() * enemy.attacks.length)];
             const enemyAttackInfo = calculateDamage({
                 monsterAtk: enemy.status.atk,
                 monsterLck: enemy.status.lck,
                 atk: randomAttack,
                 oponentWeakness: emby.weakness,
+                oponentDefense: emby.status.def,
             });
-            queue.push(() => {
+
+            if (doesEnemyAttackFirst({ player: emby, enemy })) {
                 disableInterface();
                 enemy.attack({
                     attack: enemyAttackInfo,
                     recipient: emby,
                     renderedSprites
                 });
+                criticalOrSuperEffectiveMsg(enemyAttackInfo);
+                
                 if (emby.health.current <= 0) {
                     queue.push(() => {
                         endBattleProcedure({ battleWinner: enemy, battleLoser: emby });
@@ -100,7 +82,84 @@ const initBattle = () => {
                         });
                     });
                 };
-            });
+                queue.push(() => {
+                    emby.attack({
+                        attack: attackInfo,
+                        recipient: enemy,
+                        renderedSprites
+                    });
+                    criticalOrSuperEffectiveMsg(attackInfo);
+
+                    if (enemy.health.current <= 0) {
+                        queue.push(() => {
+                            endBattleProcedure({ battleWinner: emby, battleLoser: enemy });
+                        });
+                        queue.push(() => {
+                            afterBattleInfo({ battleWinner: emby, battleLoser: enemy });
+                        });
+                        queue.push(() => {
+                            gsap.to('#overlapping-div', {
+                                opacity: 1,
+                                onComplete() {
+                                    transitionToMap();
+                                },
+                            });
+                        });
+                    };
+                });
+
+            } else {
+                disableInterface();
+                emby.attack({
+                    attack: attackInfo,
+                    recipient: enemy,
+                    renderedSprites
+                });
+                criticalOrSuperEffectiveMsg(attackInfo);
+
+                if (enemy.health.current <= 0) {
+                    queue.push(() => {
+                        endBattleProcedure({ battleWinner: emby, battleLoser: enemy });
+                    });
+                    queue.push(() => {
+                        afterBattleInfo({ battleWinner: emby, battleLoser: enemy });
+                    });
+                    queue.push(() => {
+                        gsap.to('#overlapping-div', {
+                            opacity: 1,
+                            onComplete() {
+                                transitionToMap();
+                            },
+                        });
+                    });
+                };
+
+                queue.push(() => {
+                    disableInterface();
+                    enemy.attack({
+                        attack: enemyAttackInfo,
+                        recipient: emby,
+                        renderedSprites
+                    });
+                    criticalOrSuperEffectiveMsg(enemyAttackInfo);
+
+                    if (emby.health.current <= 0) {
+                        queue.push(() => {
+                            endBattleProcedure({ battleWinner: enemy, battleLoser: emby });
+                            audio.battle.stop();
+                            audio.victory.play();
+                        });
+                        queue.push(() => {
+                            gsap.to('#overlapping-div', {
+                                opacity: 1,
+                                onComplete() {
+                                    transitionToMap();
+                                },
+                            });
+                        });
+                    };
+                });
+            }
         });
 
         button.addEventListener('mouseenter', (e) => {
@@ -167,6 +226,19 @@ const transitionToMap = () => {
         opacity: 0
     });
     audio.map.play();
+};
+
+const criticalOrSuperEffectiveMsg = (attack) => {
+    if (attack.isCriticalHit) {
+        queue.push(() => {
+            battleTexts.innerHTML = 'A critical hit!';
+        });
+    };
+    if (attack.isSuperEffective) {
+        queue.push(() => {
+            battleTexts.innerHTML = "It's super effective!";
+        });
+    };
 };
 
 const animateBattle = () => {
